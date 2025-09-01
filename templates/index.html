@@ -17,6 +17,8 @@
     <meta property="og:description" content="Interactive slider: ʻOumuamua, Borisov, 3I/ATLAS, 2019 OK, 2023 DZ2.">
     <meta property="og:url" content="https://mr-shams86.github.io/cosmic-interstellar-slider/">
     <meta property="og:image" content="https://mr-shams86.github.io/cosmic-interstellar-slider/static/images/preview.jpg">
+    <meta property="og:image:secure_url" content="https://mr-shams86.github.io/cosmic-interstellar-slider/static/images/preview.jpg">
+    <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
 
@@ -25,6 +27,7 @@
     <meta name="twitter:title" content="Cosmic Interstellar Slider — Interstellar Visitors">
     <meta name="twitter:description" content="Interactive slider: ʻOumuamua, Borisov, 3I/ATLAS, 2019 OK, 2023 DZ2.">
     <meta name="twitter:image" content="https://mr-shams86.github.io/cosmic-interstellar-slider/static/images/preview.jpg">
+
 
 
     <!-- Favicon (опционально) -->
@@ -51,7 +54,7 @@
             <div class="img-box">
                 <div class="img-slider">
                     <div class="img-item" style="--i:0;">
-                        <img src="/static/images/oumuamua.png">
+                        <img src="/static/images/oumuamua.png" fetchpriority="high" alt="ʻOumuamua">
                     </div>
                 </div>
             </div>
@@ -72,7 +75,7 @@
             <div class="img-box">
                 <div class="img-slider">
                     <div class="img-item" style="--i:1;">
-                        <img src="/static/images/borisov.png">
+                        <img src="/static/images/borisov.png" loading="lazy" alt="2I/Borisov">
                     </div>
                 </div>
             </div>
@@ -93,7 +96,7 @@
             <div class="img-box">
                 <div class="img-slider">
                     <div class="img-item" style="--i:2;">
-                        <img src="/static/images/atlas.png">
+                        <img src="/static/images/atlas.png" loading="lazy" alt="3I/Atlas">
                     </div>
                 </div>
             </div>
@@ -114,7 +117,7 @@
             <div class="img-box">
                 <div class="img-slider">
                     <div class="img-item" style="--i:3;">
-                        <img src="/static/images/OK.png">
+                        <img src="/static/images/OK.png" loading="lazy" alt="2019 OK">
                     </div>
                 </div>
             </div>
@@ -135,18 +138,18 @@
             <div class="img-box">
                 <div class="img-slider">
                     <div class="img-item" style="--i:4;">
-                        <img src="/static/images/DZ2.png">
+                        <img src="/static/images/DZ2.png" loading="lazy" alt="DZ2/2023">
                     </div>
                 </div>
             </div>
         </div>
 
         <ul class="avatar">
-            <li class="selected"><img src="/static/images/avatar/avatar_oumuamua.png"></li>
-            <li><img src="/static/images/avatar/avatar_borisov.png"></li>
-            <li><img src="/static/images/avatar/avatar_atlas.png"></li>
-            <li><img src="/static/images/avatar/avatar_ok.png"></li>
-            <li><img src="/static/images/avatar/avatar_dz2.png"></li>
+            <li class="selected"><img loading="lazy" src="/static/images/avatar/avatar_oumuamua.png" alt="ʻOumuamua"></li>
+            <li><img loading="lazy" src="/static/images/avatar/avatar_borisov.png" alt="Borisov"></li>
+            <li><img loading="lazy" src="/static/images/avatar/avatar_atlas.png" alt="3I/ATLAS"></li>
+            <li><img loading="lazy" src="/static/images/avatar/avatar_ok.png" alt="2019 OK"></li>
+            <li><img loading="lazy" src="/static/images/avatar/avatar_dz2.png" alt="2023 DZ2"></li>
         </ul>
     </div>
 
