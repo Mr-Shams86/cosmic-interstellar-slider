@@ -222,3 +222,100 @@ html,body{ background:#000; }              /* сделаем фон без бе�
 @media (prefers-reduced-motion: reduce){
   .modal{ transition:none; }
 }
+
+/* --- top nav --- */
+.site-nav{
+  position: fixed;
+  inset: 16px 50% auto;
+  transform: translateX(-50%);
+  width: min(1100px, 92vw);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px;
+  border-radius: 18px;
+  background: rgba(10,10,14,.35);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.06);
+  z-index: 20;                  /* чтобы всегда была поверх карусели/аватаров */
+  pointer-events: auto;
+}
+.site-nav .brand{display:flex; gap:10px; align-items:center; color:#fff; text-decoration:none;}
+.site-nav .brand img{width:28px; height:28px; border-radius:50%; box-shadow:0 0 10px rgba(0,255,200,.35);}
+.site-nav .brand span{font-weight:700; letter-spacing:.2px;}
+.site-nav .brand small{opacity:.7; font-size:12px;}
+.site-nav nav{display:flex; gap:16px; align-items:center;}
+.site-nav nav a{color:#fff; text-decoration:none; opacity:.8}
+.site-nav nav a:hover{opacity:1}
+.site-nav .btn-nav{padding:8px 14px; border:1px solid rgba(255,255,255,.25); border-radius:999px;}
+
+html,body{scroll-behavior:smooth;}
+
+/* якоря не прячутся под фикс-шапкой */
+:root{ --nav-h: 68px; }
+[id]{ scroll-margin-top: calc(var(--nav-h) + 16px); }
+
+/* секции ниже hero */
+main section{
+  min-height: 50vh;
+  padding: 100px 5% 60px;
+  color:#ddd;
+  max-width:1100px;
+  margin:0 auto;
+}
+main h2{ color:#23f414; font-size:28px; margin-bottom:12px; }
+main p, main li{ color:#08edf5; opacity:.9; }
+main ul{ padding-left:18px; line-height:1.7; }
+
+/* адаптив для узких экранов */
+@media (max-width: 640px){
+  .site-nav{ inset:12px 16px auto 16px; transform:none; width:auto; }
+  .site-nav .brand span{ display:none; }  /* можно скрыть длинный заголовок */
+}
+
+/* Доступность: скрытый текст для скринридеров */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Соц-иконки */
+.socials{
+  --accent: #48fb0c;              /* неоновый розовый, как на твоём скрине */
+  --ring: rgba(10, 241, 218, 0.35); /* мягкое свечение */
+  display:flex; gap:18px; align-items:center;
+  margin-top: 16px;
+}
+
+.socials .social{
+  width: 52px; height: 52px;
+  display:grid; place-items:center;
+  border-radius: 999px;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease;
+  box-shadow: 0 0 0 0 var(--ring) inset, 0 0 0 0 var(--ring);
+  background: transparent;
+}
+
+.socials .social i{
+  font-size: 24px; line-height: 1;
+}
+
+.socials .social:hover,
+.socials .social:focus-visible{
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 16px 2px var(--ring),
+    inset 0 0 14px 2px var(--ring);
+  color: #111;                    
+  background: var(--accent);
+  outline: none;
+}
+
+#contact { padding-top: 40px; padding-bottom: 60px; }
+
+
+
+
