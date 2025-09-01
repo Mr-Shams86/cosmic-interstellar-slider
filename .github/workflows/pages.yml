@@ -1,7 +1,8 @@
 name: Deploy to GitHub Pages
+
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -10,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: false
 
 jobs:
@@ -22,10 +23,13 @@ jobs:
 
       - name: Build site folder
         run: |
+          set -e
           mkdir -p site
           cp -R static site/static
           cp templates/index.html site/index.html
-          sed -i 's|/static/|./static/|g' site/index.html
+          # Меняем только локальные ассеты; OG/Twitter абсолютные URL не трогаем
+          sed -i -E 's|href="/static/|href="./static/|g' site/index.html
+          sed -i -E 's|src="/static/|src="./static/|g'   site/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -42,4 +46,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-      
