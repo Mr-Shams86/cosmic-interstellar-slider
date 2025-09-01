@@ -238,12 +238,12 @@ html,body{ background:#000; }              /* сделаем фон без бе�
   z-index: 20;                  /* чтобы всегда была поверх карусели/аватаров */
   pointer-events: auto;
 }
-.site-nav .brand{display:flex; gap:10px; align-items:center; color:#fff; text-decoration:none;}
+.site-nav .brand{display:flex; gap:10px; align-items:center; color:#07d9f4; text-decoration:none;}
 .site-nav .brand img{width:28px; height:28px; border-radius:50%; box-shadow:0 0 10px rgba(0,255,200,.35);}
 .site-nav .brand span{font-weight:700; letter-spacing:.2px;}
 .site-nav .brand small{opacity:.7; font-size:12px;}
 .site-nav nav{display:flex; gap:16px; align-items:center;}
-.site-nav nav a{color:#fff; text-decoration:none; opacity:.8}
+.site-nav nav a{color:#09f50d; text-decoration:none; opacity:.8}
 .site-nav nav a:hover{opacity:1}
 .site-nav .btn-nav{padding:8px 14px; border:1px solid rgba(255,255,255,.25); border-radius:999px;}
 
@@ -281,7 +281,7 @@ main ul{ padding-left:18px; line-height:1.7; }
 
 /* Соц-иконки */
 .socials{
-  --accent: #48fb0c;              /* неоновый розовый, как на твоём скрине */
+  --accent: #0cfbeb;              /* неоновый розовый, как на твоём скрине */
   --ring: rgba(10, 241, 218, 0.35); /* мягкое свечение */
   display:flex; gap:18px; align-items:center;
   margin-top: 16px;
