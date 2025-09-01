@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider Carousel using HTML, CSS, & JavaScript | Cosmic Interstellar Slider</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+    <div class="carousel">
+        <div class="item active">
+            <div class="bg"></div>
+            <div class="info-box">
+                <div class="info-slider">
+                    <div class="info-item" style="--i:0;">
+                        <h2>1I/ʻOumuamua</h2>
+                        <p>— The first confirmed interstellar object, discovered by Pan-STARRS in 2017 (designation 1I/2017 U1).</p>
+                        <a href="#" class="btn">Learn more</a>
+                        <div class="info-bg"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="img-box">
+                <div class="img-slider">
+                    <div class="img-item" style="--i:0;">
+                        <img src="/static/images/oumuamua.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="bg"></div>
+            <div class="info-box">
+                <div class="info-slider">
+                    <div class="info-item" style="--i:1;">
+                        <h2>2I/Borisov</h2>
+                        <p>— The first known interstellar comet, discovered in 2019 by Gennady Borisov; later imaged by the Hubble Space Telescope.</p>
+                        <a href="#" class="btn">Learn more</a>
+                        <div class="info-bg"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="img-box">
+                <div class="img-slider">
+                    <div class="img-item" style="--i:1;">
+                        <img src="/static/images/borisov.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="bg"></div>
+            <div class="info-box">
+                <div class="info-slider">
+                    <div class="info-item" style="--i:2;">
+                        <h2>3I/Atlas</h2>
+                        <p>— The third interstellar object, discovered on July 1, 2025 by the ATLAS survey; now studied by Hubble and JWST. Early results show an unusually CO₂-rich coma (CO₂/H₂O ≈ 8:1).</p>
+                        <a href="#" class="btn">Learn more</a>
+                        <div class="info-bg"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="img-box">
+                <div class="img-slider">
+                    <div class="img-item" style="--i:2;">
+                        <img src="/static/images/atlas.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="bg"></div>
+            <div class="info-box">
+                <div class="info-slider">
+                    <div class="info-item" style="--i:3;">
+                        <h2>OK/2019</h2>
+                        <p>— A ~100 m asteroid spotted only days in advance; on 25 Jul 2019 it passed safely at ~73,000 km (~0.19 of the Moon’s distance).</p>
+                        <a href="#" class="btn">Learn more</a>
+                        <div class="info-bg"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="img-box">
+                <div class="img-slider">
+                    <div class="img-item" style="--i:3;">
+                        <img src="/static/images/OK.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="bg"></div>
+            <div class="info-box">
+                <div class="info-slider">
+                    <div class="info-item" style="--i:4;">
+                        <h2>DZ2/2023</h2>
+                        <p>— A ~40–90 m near-Earth asteroid that safely flew past on 25 Mar 2023 at ~175,000 km (~0.45 of the Moon’s distance).</p>
+                        <a href="#" class="btn">Learn more</a>
+                        <div class="info-bg"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="img-box">
+                <div class="img-slider">
+                    <div class="img-item" style="--i:4;">
+                        <img src="/static/images/DZ2.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ul class="avatar">
+            <li class="selected"><img src="/static/images/avatar/avatar_oumuamua.png"></li>
+            <li><img src="/static/images/avatar/avatar_borisov.png"></li>
+            <li><img src="/static/images/avatar/avatar_atlas.png"></li>
+            <li><img src="/static/images/avatar/avatar_ok.png"></li>
+            <li><img src="/static/images/avatar/avatar_dz2.png"></li>
+        </ul>
+    </div>
+
+    <!-- Modal -->
+<div class="modal" id="infoModal" aria-hidden="true">
+  <div class="modal__backdrop" data-close-modal></div>
+  <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal__close" aria-label="Close" data-close-modal>&times;</button>
+    <h3 id="modalTitle"></h3>
+    <div id="modalBody"></div>
+    <a id="modalSource" class="modal__link" href="#" target="_blank" rel="noopener">Wikipedia</a>
+  </div>
+</div>
+
+
+
+    <script src="/static/js/script.js"></script>
+</body>
+
+</html>
