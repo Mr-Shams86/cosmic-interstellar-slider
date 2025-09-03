@@ -1,33 +1,69 @@
-const avatars = document.querySelectorAll('.avatar li');
+// ===== Карусель =========================================================
+const avatars    = document.querySelectorAll('.avatar li');
 const infoSlider = document.querySelectorAll('.info-slider');
-const imgSlider = document.querySelectorAll('.img-slider');
-const items = document.querySelectorAll('.item');
+const imgSlider  = document.querySelectorAll('.img-slider');
+const items      = document.querySelectorAll('.item');
+
+// читаем шаги сдвига из CSS (:root --slide-step-y/x)
+const rootStyles = getComputedStyle(document.documentElement);
+const STEP_Y = parseFloat(rootStyles.getPropertyValue('--slide-step-y')) || 100;
+const STEP_X = parseFloat(rootStyles.getPropertyValue('--slide-step-x')) || 100;
 
 let index = 0;
 
-avatars.forEach((avatar, ind) => {
-    avatar.addEventListener('click', () => {
+function applyTransforms() {
+  infoSlider.forEach(s => (s.style.transform = `translateY(${-(index * STEP_Y)}%)`));
+  imgSlider.forEach(s  => (s.style.transform = `translateX(${-(index * STEP_X)}%)`));
+}
 
-        document.querySelector('.avatar .selected').classList.remove('selected');
-        avatar.classList.add('selected');
+function goTo(i){
+  if (!items.length) return;
 
-        index = ind;
+  // циклическая навигация
+  index = (i + items.length) % items.length;
 
-        infoSlider.forEach(slide => {
-            slide.style.transform = `translateY(${index * -100}%)`;
-        });
-        imgSlider.forEach(slide => {
-            slide.style.transform = `translateX(${index * -100}%)`;
-        });
+  // визуальное состояние
+  document.querySelector('.avatar .selected')?.classList.remove('selected');
+  avatars[index]?.classList.add('selected');
 
-        document.querySelector('.item.active').classList.remove('active');
-        items[index].classList.add('active');
-    });
+  document.querySelector('.item.active')?.classList.remove('active');
+  items[index]?.classList.add('active');
+
+  // доступность
+  avatars.forEach((el, k) => {
+    el.setAttribute('aria-selected', k === index ? 'true' : 'false');
+    el.tabIndex = k === index ? 0 : -1;
+  });
+
+  applyTransforms();
+}
+
+// подготовка аватаров
+avatars.forEach((avatar, i) => {
+  avatar.setAttribute('role', 'button');
+  avatar.tabIndex = i === 0 ? 0 : -1;
+  const alt = avatar.querySelector('img')?.alt || `Slide ${i+1}`;
+  avatar.setAttribute('aria-label', `Show ${alt}`);
+
+  avatar.addEventListener('click', () => goTo(i));
+  avatar.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goTo(i); }
+    if (e.key === 'ArrowRight') goTo(index + 1);
+    if (e.key === 'ArrowLeft')  goTo(index - 1);
+  });
 });
 
-/* ===== Learn more modal ===== */
+// глобальные стрелки (не мешаем модалке/меню)
+document.addEventListener('keydown', (e) => {
+  const inModal = document.getElementById('infoModal')?.classList.contains('open');
+  const navOpen = document.querySelector('.site-nav.open');
+  if (inModal || navOpen) return;
 
-/* Детальные тексты в порядке твоих слайдов 0..4 */
+  if (e.key === 'ArrowRight') goTo(index + 1);
+  if (e.key === 'ArrowLeft')  goTo(index - 1);
+});
+
+// ===== Модалка "Learn more" ============================================
 const DETAILS = [
   {
     title: "1I/ʻOumuamua",
@@ -86,10 +122,9 @@ const DETAILS = [
   }
 ];
 
-
-const modal = document.getElementById("infoModal");
-const modalTitle = document.getElementById("modalTitle");
-const modalBody = document.getElementById("modalBody");
+const modal       = document.getElementById("infoModal");
+const modalTitle  = document.getElementById("modalTitle");
+const modalBody   = document.getElementById("modalBody");
 const modalSource = document.getElementById("modalSource");
 
 function openModalForCurrent() {
@@ -98,39 +133,47 @@ function openModalForCurrent() {
     html: "<p>More information coming soon.</p>",
     link: "#"
   };
+
   modalTitle.textContent = d.title;
-  modalBody.innerHTML = d.html;
+  modalBody.innerHTML    = d.html;
+
   if (d.link && d.link !== "#") {
     modalSource.href = d.link;
     modalSource.style.display = "inline-flex";
   } else {
     modalSource.style.display = "none";
   }
+
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-  modal.querySelector(".modal__close").focus();
+  document.body.classList.add("no-scroll"); // совместимо с бургером
+
+  modal.querySelector(".modal__close")?.focus({ preventScroll: true });
 }
 
 function closeModal() {
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
+
+  // если бургер закрыт — вернём прокрутку
+  const headerOpen = document.querySelector('.site-nav.open');
+  if (!headerOpen) document.body.classList.remove("no-scroll");
 }
 
-/* Делегируем клик по любой кнопке .btn */
+// Делегирование: ловим и [data-open-modal], и .info-item .btn
 document.addEventListener("click", (e) => {
-  const btn = e.target.closest(".btn");
-  if (btn) {
+  const openBtn = e.target.closest("[data-open-modal], .info-item .btn");
+  if (openBtn) {
     e.preventDefault();
     openModalForCurrent();
+    return;
   }
   if (e.target.matches("[data-close-modal]")) {
     closeModal();
   }
 });
 
-/* Закрытие по ESC и по клику на фон */
+// Закрытие по ESC и по клику на тёмную подложку
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
 });
@@ -138,3 +181,29 @@ modal.addEventListener("click", (e) => {
   if (e.target.classList.contains("modal__backdrop")) closeModal();
 });
 
+// ===== Мобильное меню (бургер) =========================================
+(() => {
+  const header = document.querySelector('.site-nav');
+  const toggle = header?.querySelector('.nav-toggle');
+  const scrim  = header?.querySelector('.nav-scrim');
+  const links  = header?.querySelectorAll('.nav-menu a');
+  if (!header || !toggle) return;
+
+  function setOpen(isOpen) {
+    header.classList.toggle('open', isOpen);
+    toggle.setAttribute('aria-expanded', String(isOpen));
+    const lock = isOpen || modal.classList.contains('open');
+    document.body.classList.toggle('no-scroll', lock);
+  }
+
+  toggle.addEventListener('click', () => setOpen(!header.classList.contains('open')));
+  scrim?.addEventListener('click', () => setOpen(false));
+  links?.forEach(a => a.addEventListener('click', () => setOpen(false)));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && header.classList.contains('open')) setOpen(false);
+  });
+})();
+
+// применяем стартовые сдвиги (на случай, если index ≠ 0)
+applyTransforms();
