@@ -1,69 +1,54 @@
-// ===== Карусель =========================================================
-const avatars    = document.querySelectorAll('.avatar li');
-const infoSlider = document.querySelectorAll('.info-slider');
-const imgSlider  = document.querySelectorAll('.img-slider');
-const items      = document.querySelectorAll('.item');
+// ========= Общие DOM ссылки ===========================================
+const items   = Array.from(document.querySelectorAll('.carousel .item'));
+const avatars = Array.from(document.querySelectorAll('.avatar li'));
 
-// читаем шаги сдвига из CSS (:root --slide-step-y/x)
-const rootStyles = getComputedStyle(document.documentElement);
-const STEP_Y = parseFloat(rootStyles.getPropertyValue('--slide-step-y')) || 100;
-const STEP_X = parseFloat(rootStyles.getPropertyValue('--slide-step-x')) || 100;
+// Активный индекс
+let index = Math.max(0, items.findIndex(el => el.classList.contains('active')));
 
-let index = 0;
-
-function applyTransforms() {
-  infoSlider.forEach(s => (s.style.transform = `translateY(${-(index * STEP_Y)}%)`));
-  imgSlider.forEach(s  => (s.style.transform = `translateX(${-(index * STEP_X)}%)`));
-}
-
+// ========= Навигация по слайдам (без сдвигов, только .active) =========
 function goTo(i){
   if (!items.length) return;
-
-  // циклическая навигация
   index = (i + items.length) % items.length;
 
-  // визуальное состояние
+  // активный слайд
+  items.forEach((el, k) => el.classList.toggle('active', k === index));
+
+  // аватары
   document.querySelector('.avatar .selected')?.classList.remove('selected');
-  avatars[index]?.classList.add('selected');
+  if (avatars[index]) avatars[index].classList.add('selected');
 
-  document.querySelector('.item.active')?.classList.remove('active');
-  items[index]?.classList.add('active');
-
-  // доступность
   avatars.forEach((el, k) => {
     el.setAttribute('aria-selected', k === index ? 'true' : 'false');
     el.tabIndex = k === index ? 0 : -1;
   });
-
-  applyTransforms();
 }
 
-// подготовка аватаров
+// клики/клавиатура на аватарах
 avatars.forEach((avatar, i) => {
   avatar.setAttribute('role', 'button');
-  avatar.tabIndex = i === 0 ? 0 : -1;
+  avatar.tabIndex = i === index ? 0 : -1;
   const alt = avatar.querySelector('img')?.alt || `Slide ${i+1}`;
   avatar.setAttribute('aria-label', `Show ${alt}`);
 
   avatar.addEventListener('click', () => goTo(i));
   avatar.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goTo(i); }
-    if (e.key === 'ArrowRight') goTo(index + 1);
-    if (e.key === 'ArrowLeft')  goTo(index - 1);
   });
 });
 
-// глобальные стрелки (не мешаем модалке/меню)
+// стрелки на клавиатуре
 document.addEventListener('keydown', (e) => {
   const inModal = document.getElementById('infoModal')?.classList.contains('open');
   const navOpen = document.querySelector('.site-nav.open');
   if (inModal || navOpen) return;
-
   if (e.key === 'ArrowRight') goTo(index + 1);
   if (e.key === 'ArrowLeft')  goTo(index - 1);
 });
 
-// ===== Модалка "Learn more" ============================================
+// старт
+goTo(index);
+
+// ========= Модалка =====================================================
 const DETAILS = [
   {
     title: "1I/ʻOumuamua",
@@ -99,7 +84,7 @@ const DETAILS = [
     link: "https://en.wikipedia.org/wiki/3I/ATLAS"
   },
   {
-    title: "2019 OK",
+    title: "OK/2019",
     html: `
       <p>~100 m asteroid spotted only days in advance; safely passed Earth on 25 Jul 2019
       at ~73,000 km (~0.19 lunar distances).</p>
@@ -110,7 +95,7 @@ const DETAILS = [
     link: "https://en.wikipedia.org/wiki/2019_OK"
   },
   {
-    title: "2023 DZ2",
+    title: "DZ2/2023",
     html: `
       <p>~40–90 m near-Earth asteroid that safely flew past on 25 Mar 2023 at ~175,000 km
       (~0.45 lunar distances).</p>
@@ -146,34 +131,23 @@ function openModalForCurrent() {
 
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("no-scroll"); // совместимо с бургером
-
+  document.body.classList.add("no-scroll");
   modal.querySelector(".modal__close")?.focus({ preventScroll: true });
 }
 
 function closeModal() {
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
-
-  // если бургер закрыт — вернём прокрутку
   const headerOpen = document.querySelector('.site-nav.open');
   if (!headerOpen) document.body.classList.remove("no-scroll");
 }
 
-// Делегирование: ловим и [data-open-modal], и .info-item .btn
 document.addEventListener("click", (e) => {
   const openBtn = e.target.closest("[data-open-modal], .info-item .btn");
-  if (openBtn) {
-    e.preventDefault();
-    openModalForCurrent();
-    return;
-  }
-  if (e.target.matches("[data-close-modal]")) {
-    closeModal();
-  }
+  if (openBtn) { e.preventDefault(); openModalForCurrent(); return; }
+  if (e.target.matches("[data-close-modal]")) closeModal();
 });
 
-// Закрытие по ESC и по клику на тёмную подложку
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
 });
@@ -181,7 +155,7 @@ modal.addEventListener("click", (e) => {
   if (e.target.classList.contains("modal__backdrop")) closeModal();
 });
 
-// ===== Мобильное меню (бургер) =========================================
+// ========= Бургер =======================================================
 (() => {
   const header = document.querySelector('.site-nav');
   const toggle = header?.querySelector('.nav-toggle');
@@ -192,6 +166,7 @@ modal.addEventListener("click", (e) => {
   function setOpen(isOpen) {
     header.classList.toggle('open', isOpen);
     toggle.setAttribute('aria-expanded', String(isOpen));
+    toggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
     const lock = isOpen || modal.classList.contains('open');
     document.body.classList.toggle('no-scroll', lock);
   }
@@ -205,5 +180,158 @@ modal.addEventListener("click", (e) => {
   });
 })();
 
-// применяем стартовые сдвиги (на случай, если index ≠ 0)
-applyTransforms();
+// ========= Звёзды / «кометы» ===========================================
+(() => {
+  const root = document.querySelector('.carousel');
+  const cvs  = document.getElementById('fxStars');
+  if (!root || !cvs) return;
+
+  const ctx = cvs.getContext('2d', { alpha: true });
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  let W = 0, H = 0, stars = [], comets = [], dust = [], raf = 0;
+  const prefersReduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize(){
+    const rect = root.getBoundingClientRect();
+    W = Math.floor(rect.width);
+    H = Math.floor(rect.height);
+
+    cvs.width  = Math.floor(W * dpr);
+    cvs.height = Math.floor(H * dpr);
+    cvs.style.width  = W + 'px';
+    cvs.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    initStarsAndDust();
+  }
+
+  function initStarsAndDust(){
+    const area  = W * H;
+    const count = prefersReduce ? 60 : Math.max(90, Math.min(260, Math.round(area / 9000)));
+    stars = new Array(count).fill(0).map(() => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      s: Math.random() * 1.2 + 0.3,
+      v: Math.random() * 0.06 + 0.02,
+      tw: Math.random() * Math.PI * 2
+    }));
+
+    const DUST_COUNT = prefersReduce ? 8 : 16;
+    const margin = Math.max(60, Math.min(160, Math.round(Math.min(W, H) * 0.14)));
+    dust = new Array(DUST_COUNT).fill(0).map(() => spawnDust(margin));
+  }
+
+  function spawnDust(margin){
+    const side = Math.floor(Math.random() * 4);
+    let x, y;
+    if (side === 0) { x = Math.random() * margin;        y = Math.random() * H; }
+    else if (side === 1){ x = W - Math.random() * margin; y = Math.random() * H; }
+    else if (side === 2){ x = Math.random() * W;          y = Math.random() * margin; }
+    else {                x = Math.random() * W;          y = H - Math.random() * margin; }
+
+    return {
+      x, y,
+      r: 20 + Math.random()*70,
+      a: 0.02 + Math.random()*0.05,
+      hue: 160 + Math.random()*60,
+      vx: (Math.random()-0.5)*0.05,
+      vy: (Math.random()-0.5)*0.05
+    };
+  }
+
+  function spawnComet(){
+    if (prefersReduce) return;
+    const fromRight = Math.random() > 0.5;
+    const startX = fromRight ? W + 40 : -40;
+    const startY = Math.random() * (H * 0.4);
+    const vx = (fromRight ? -1 : 1) * (1.8 + Math.random()*0.9);
+    const vy = 0.6 + Math.random()*0.5;
+
+    comets.push({ x: startX, y: startY, vx, vy, life: 0, maxLife: 5 + Math.random()*2, trail: [] });
+  }
+
+  function drawStar(s, dt){
+    s.tw += dt * 2;
+    const a = 0.5 + 0.5 * Math.sin(s.tw);
+    ctx.globalAlpha = 0.35 + 0.35 * a;
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, Math.PI * 2);
+    ctx.fillStyle = '#9ffcff'; ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  function drawDust(d){
+    d.x += d.vx; d.y += d.vy;
+
+    const centerBox = Math.min(W, H) * 0.6;
+    const cx = (W - centerBox) / 2, cy = (H - centerBox) / 2;
+    if (d.x > cx && d.x < cx + centerBox && d.y > cy && d.y < cy + centerBox){
+      const margin = Math.max(60, Math.min(160, Math.round(Math.min(W, H) * 0.14)));
+      Object.assign(d, spawnDust(margin));
+    }
+
+    ctx.filter = 'blur(18px)';
+    ctx.beginPath();
+    ctx.fillStyle = `hsla(${Math.round(d.hue)}, 100%, 60%, ${d.a})`;
+    ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
+    ctx.fill();
+    ctx.filter = 'none';
+  }
+
+  function drawComet(c){
+    c.trail.push({ x: c.x, y: c.y });
+    if (c.trail.length > 28) c.trail.shift();
+
+    for (let i = 1; i < c.trail.length; i++){
+      const p0 = c.trail[i-1], p1 = c.trail[i];
+      const t = i / c.trail.length;
+      ctx.strokeStyle = 'rgba(140,255,250,' + (0.06 + 0.18 * t) + ')';
+      ctx.lineWidth = 1 + 3 * (1 - t);
+      ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+    }
+    ctx.beginPath(); ctx.arc(c.x, c.y, 1.6, 0, Math.PI*2);
+    ctx.fillStyle = '#cfffff'; ctx.fill();
+  }
+
+  let lastT = performance.now();
+  function tick(now){
+    const dt = Math.min(0.05, (now - lastT) / 1000);
+    lastT = now;
+
+    ctx.clearRect(0, 0, W, H);
+
+    for (const d of dust) drawDust(d);
+    for (const s of stars){
+      s.y += s.v; if (s.y > H) { s.y = -2; s.x = Math.random() * W; }
+      drawStar(s, dt);
+    }
+    for (let i = comets.length - 1; i >= 0; i--){
+      const c = comets[i];
+      c.x += c.vx; c.y += c.vy; c.life += dt;
+      drawComet(c);
+      const out = c.x < -80 || c.x > W + 80 || c.y > H + 60 || c.life > c.maxLife;
+      if (out) comets.splice(i, 1);
+    }
+
+    raf = requestAnimationFrame(tick);
+  }
+
+  // редкие кометы
+  let cometTimer;
+  function scheduleComets(){
+    clearTimeout(cometTimer);
+    const next = (prefersReduce ? 15000 : 8000) + Math.random()*6000;
+    cometTimer = setTimeout(() => { spawnComet(); scheduleComets(); }, next);
+  }
+  
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(raf);
+    else { lastT = performance.now(); raf = requestAnimationFrame(tick); }
+  });
+
+  resize();
+  addEventListener('resize', resize);
+  scheduleComets();
+  raf = requestAnimationFrame(tick);
+})();

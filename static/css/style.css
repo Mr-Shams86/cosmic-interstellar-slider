@@ -3,72 +3,74 @@
 
 :root{
   --nav-h: 68px;
-  --slide-step-y: 107%;  /* вертикальный шаг (текст) */
-  --slide-step-x: 107%;  /* горизонтальный шаг (картинка) */
+  --slide-step-y: 107%;
+  --slide-step-x: 107%;
 }
 
 *{ margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat',sans-serif; }
 
 html,body{
   max-width:100%;
-  overflow-x:clip;                 /* убираем горизонтальный скролл */
+  overflow-x:clip;
   background:#000;
   scroll-behavior:smooth;
   padding-right:env(safe-area-inset-right);
   padding-left: env(safe-area-inset-left);
 }
 
-/* якоря не прячутся под фикс-шапкой */
 [id]{ scroll-margin-top: calc(var(--nav-h) + 16px); }
 
 /* === Hero / Карусель ================================================== */
 .carousel{
   position:relative;
-  height:100svh;                   /* стабильная высота на мобилках */
+  isolation:isolate;
+  height:100svh;
   background:#000;
-  overflow:clip;
+  overflow:hidden;
 }
-@supports not (overflow:clip){ .carousel{ overflow:hidden; } }
 
+/* Слайды наложены друг на друга: виден только .active */
+.carousel > .item{ position:absolute; inset:0; height:100%; opacity:0; pointer-events:none; transition:opacity .45s ease; }
+.carousel > .item.active{ opacity:1; pointer-events:auto; }
+
+/* Текстовый блок */
 .item .info-box{
   position:absolute; left:5%; top:50%; transform:translateY(-50%);
   width:450px; height:280px; display:flex; align-items:center;
-  z-index:1; overflow:hidden;
+  overflow:hidden; z-index:6;           /* выше звёзд */
 }
-.item.active .info-box{ z-index:2; }
-
-.info-box .info-slider{ height:inherit; transition:.5s ease; }
+.info-box .info-slider{ height:inherit; }
 .info-slider .info-item{
   height:inherit; display:flex; flex-direction:column; justify-content:center;
-  color:#07f1e6; transform:translateY(calc(var(--i) * var(--slide-step-y)));
+  color:#07f1e6;
 }
 .info-item h2{ font-size:40px; line-height:1; }
 .info-item p { font-size:16px; margin:15px 0 20px; }
 
 .info-item .btn{
-  position:relative; z-index:2;    /* клики поверх свечения */
+  position:relative; z-index:7;
   display:inline-flex; justify-content:center; align-items:center;
   width:180px; height:48px; background:transparent;
   border:2px solid #04f2fa; border-radius:40px;
   box-shadow:0 0 10px rgba(0,0,0,.1);
   font-size:16px; color:#53f807; text-decoration:none; font-weight:600;
 }
-.info-item .btn::before{ content:none !important; } /* страховка от глобальных before */
-.info-item{ list-style:none; }
-.info-item .btn:focus-visible{
-  outline:2px solid #04f2fa; outline-offset:3px; border-radius:999px;
-}
+.info-item .btn::before{ content:none !important; }
+.info-item .btn:focus-visible{ outline:2px solid #04f2fa; outline-offset:3px; border-radius:999px; }
 
+/* Картинка */
 .item .img-box{
-  position:absolute; left:40%; top:50%; transform:translateY(-50%);
+  position:absolute; left:40%;
+  top: var(--img-top, 54%);
+  transform:translateY(-50%);
   width:clamp(560px, 50vw, 820px);
   height:clamp(420px, 62vh, 720px);
   display:flex; align-items:center; overflow:hidden;
+  pointer-events:none; z-index:5;       /* под текстом, над звёздами */
 }
-.img-box .img-slider{ width:inherit; height:inherit; transition:.5s ease; }
+.img-box .img-slider{ width:inherit; height:inherit; }
 .img-slider .img-item{
   width:inherit; height:inherit; display:flex; justify-content:center; align-items:center;
-  transform:translateX(calc(var(--i) * var(--slide-step-x)));
 }
 .img-item img{
   width:100%; height:100%; object-fit:contain; pointer-events:none;
@@ -77,10 +79,10 @@ html,body{
 }
 .item.active .img-item img{ transform:scale(1); }
 
-/* Аватары справа */
+/* Аватары */
 .avatar{
   position:absolute; right:5%; top:50%; transform:translateY(-50%);
-  list-style:none;
+  list-style:none; z-index:8;
 }
 .avatar li{
   width:95px; height:95px; border-radius:50%; cursor:pointer; margin:20px 0; overflow:hidden;
@@ -89,20 +91,38 @@ html,body{
 .avatar li.selected{ border:3px solid #51f008; }
 .avatar li img{ width:100%; height:100%; object-fit:cover; }
 
-/* Фон/свет и FIX «волосков» между блоками */
+/* Фон слайда (под всем) */
 .item .bg{
   position:absolute; left:0; top:-1px; width:100%; height:calc(100% + 2px);
-  background:#000;                 /* единый фон */
-  opacity:0; transition:opacity .45s ease; will-change:opacity;
+  background:#000; opacity:1; z-index:0;
 }
-.item.active .bg{ opacity:1; }
 .item .bg::before{
   content:''; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
   width:500px; height:500px; background:rgba(255,255,255,.8);
   border-radius:50%; filter:blur(200px);
 }
 
-/* === Modal ============================================================= */
+/* Звёзды — над фоном, под контентом, не ловят клики */
+#fxStars{
+  position:absolute; inset:0;
+  z-index:4;
+  pointer-events:none;
+  opacity:.66;
+  mix-blend-mode:screen;
+}
+
+/* Лёгкая дымка по краям */
+.carousel::after{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:1;
+  background:
+    radial-gradient(120% 70% at -10% 0%,    rgba(0,255,200,.06), transparent 60%),
+    radial-gradient(120% 70% at 110% 0%,    rgba(0,200,255,.05), transparent 60%),
+    radial-gradient(120% 70% at 110% 110%,  rgba(255,255,255,.04), transparent 60%),
+    radial-gradient(120% 70% at 0% 110%,    rgba(0,255,180,.05), transparent 60%);
+  box-shadow: inset 0 0 140px rgba(0,0,0,.65);
+}
+
+/* === Modal (как было) ================================================ */
 .modal{
   position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
   padding:clamp(12px, 4vw, 40px);
@@ -128,16 +148,15 @@ html,body{
   display:inline-flex; align-items:center; gap:8px; margin-top:14px; padding:10px 14px;
   border-radius:999px; border:1px solid #07d6f1; text-decoration:none; color:#17f703;
 }
-@media (prefers-reduced-motion:reduce){ .modal{ transition:none; } }
 
-/* === Top Nav =========================================================== */
+/* === Top Nav / Sections / Socials (без изменений по сути) ============ */
 .site-nav{
   position:fixed; left:50%; top:16px; transform:translateX(-50%);
   width:min(1100px, calc(100vw - 32px));
   display:flex; align-items:center; justify-content:space-between;
   padding:10px 16px; border-radius:18px;
   background:rgba(10,10,14,.35); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,.06); z-index:20; pointer-events:auto;
+  border:1px solid rgba(255,255,255,.06); z-index:30;
 }
 .site-nav .brand{ display:flex; gap:10px; align-items:center; color:#07d9f4; text-decoration:none; }
 .site-nav .brand img{ width:28px; height:28px; border-radius:50%; box-shadow:0 0 10px rgba(0,255,200,.35); }
@@ -149,30 +168,25 @@ html,body{
 .site-nav nav a:focus-visible{ outline:2px solid #09f50d; outline-offset:3px; border-radius:10px; }
 .site-nav .btn-nav{ padding:8px 14px; border:1px solid rgba(255,255,255,.25); border-radius:999px; }
 
-/* === Секции ниже hero ================================================== */
-main section{
-  min-height:50vh; padding:100px 5% 60px; color:#ddd; max-width:1100px; margin:0 auto;
-}
+/* Бургер: фикс на случай длинных текстов/переводов */
+.nav-toggle{ line-height:1; overflow:hidden; }
+.nav-toggle__bars{ display:block; }
+
+
+main section{ min-height:50vh; padding:100px 5% 60px; color:#ddd; max-width:1100px; margin:0 auto; }
 main h2{ color:#23f414; font-size:28px; margin-bottom:12px; }
 main p, main li{ color:#08edf5; opacity:.9; }
 main ul{ padding-left:18px; line-height:1.7; }
 
-/* === Соц-иконки (Contact Me) — всегда в одну строку =================== */
 .socials{
   list-style:none; padding:0; margin:16px auto 0;
-  display:flex; align-items:center; justify-content:center;
-  flex-wrap:nowrap;                 /* без переносов на всех ширинах */
-  gap:18px;                         /* базовый отступ */
-  max-width:100%;                   /* без искусственных ограничений */
+  display:flex; align-items:center; justify-content:center; flex-wrap:nowrap; gap:18px; max-width:100%;
 }
-.socials li{ flex:0 0 auto; }
 .socials .social{
   display:grid; place-items:center;
   width:clamp(44px,10vw,52px); height:clamp(44px,10vw,52px);
   border:2px solid #0cfbeb; border-radius:999px; color:#0cfbeb; text-decoration:none;
   transition:transform .2s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease;
-  box-shadow:0 0 0 0 rgba(10,241,218,.35) inset, 0 0 0 0 rgba(10,241,218,.35);
-  background:transparent;
 }
 .socials .social i{ font-size:24px; line-height:1; }
 .socials .social:hover, .socials .social:focus-visible{
@@ -180,31 +194,24 @@ main ul{ padding-left:18px; line-height:1.7; }
   box-shadow:0 0 16px 2px rgba(10,241,218,.35), inset 0 0 14px 2px rgba(10,241,218,.35);
   color:#111; background:#0cfbeb; outline:none;
 }
-#contact{ padding-top:40px; padding-bottom:60px; }
 
-/* Утилита доступности */
+/* Утилита доступности — прячет визуально, но оставляет для скринридеров */
 .sr-only{
-  position:absolute !important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
-  clip:rect(0 0 0 0); white-space:nowrap; border:0;
+  position:absolute !important; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
 }
 
+
 /* === Адаптив =========================================================== */
-/* Планшеты / узкие ноуты */
 @media (max-width:1200px){
-  .item .img-box{
-    left:45%;
-    width:clamp(480px,56vw,720px);
-    height:clamp(360px,60vh,640px);
-  }
+  .item .img-box{ left:45%; width:clamp(480px,56vw,720px); height:clamp(360px,60vh,640px); }
   .item .info-box{ width:min(36vw,420px); }
   .avatar{ right:max(6px, env(safe-area-inset-right)); }
   .avatar li{ width:72px; height:72px; margin:14px 0; }
 }
-
-/* Телефоны */
 @media (max-width:768px){
   .item .img-box{
-    left:50%; top:56%; transform:translate(-50%,-50%);
+    left:50%; top:var(--img-top,56%); transform:translate(-50%,-50%);
     width:min(92vw,540px); height:min(60vh,480px);
   }
   .item .info-box{
@@ -214,14 +221,9 @@ main ul{ padding-left:18px; line-height:1.7; }
   .info-item p { font-size:clamp(13px, 3.6vw, 16px); margin:10px 0 14px; }
   .info-item .btn{ width:clamp(150px, 50vw, 220px); height:44px; font-size:14px; }
 
-  .avatar{
-    right:max(6px, env(safe-area-inset-right));
-    top:50%; transform:translateY(-50%) scale(.78); transform-origin:right center;
-  }
+  .avatar{ right:max(6px, env(safe-area-inset-right)); transform:translateY(-50%) scale(.78); transform-origin:right center; }
   .avatar li{ width:58px; height:58px; margin:10px 0; }
 }
-
-/* Очень узкие телефоны */
 @media (max-width:420px){
   .item .img-box{ width:96vw; height:50vh; }
   .item .info-box{ left:4vw; width:92vw; }
@@ -229,108 +231,87 @@ main ul{ padding-left:18px; line-height:1.7; }
   .avatar li{ width:48px; height:48px; margin:8px 0; }
 }
 
-/* ===== Мобильное меню (бургер) + бренд на 2 строки ==================== */
-
-/* кнопка-бургер по умолчанию скрыта — на десктопе используем обычное меню */
+/* Бургер */
 .nav-toggle{ display:none; }
-
 @media (max-width: 640px){
-  /* на мобилке слегка уменьшаем «шаг» слайдов и повышаем шапку */
   :root{ --slide-step-y: 106%; --slide-step-x: 106%; --nav-h: 96px; }
+  .nav-toggle{ display:grid; place-items:center; width:42px; height:42px; margin-left:10px;
+    border:1px solid rgba(255,255,255,.18); border-radius:12px; background: rgba(10,10,14,.45);
+    backdrop-filter: blur(8px); cursor:pointer; z-index:26; }
+  .nav-toggle__bars{ position:relative; width:20px; height:2px; background:#c9f7ff; border-radius:2px; }
+  .nav-toggle__bars::before,.nav-toggle__bars::after{ content:""; position:absolute; left:0; width:20px; height:2px;
+    background:#c9f7ff; border-radius:2px; transition: transform .2s ease, top .2s ease, opacity .2s ease; }
+  .nav-toggle__bars::before{ top:-6px; } .nav-toggle__bars::after{ top:6px; }
+  /* burger → X when menu is open */
+.site-nav.open .nav-toggle{
+  border-color: rgba(255,255,255,.28);
+  background: rgba(10,10,14,.65);
+}
 
-  /* показываем бургер, ужимаем шапку */
-  .nav-toggle{
-    display:grid; place-items:center;
-    width:42px; height:42px; margin-left:10px;
-    border:1px solid rgba(255,255,255,.18);
-    border-radius:12px;
-    background: rgba(10,10,14,.45);
-    backdrop-filter: blur(8px);
-    cursor:pointer;
-    z-index:26; /* выше меню */
-  }
-  .nav-toggle__bars{
-    position:relative; width:20px; height:2px; background:#c9f7ff; border-radius:2px;
-  }
-  .nav-toggle__bars::before,
-  .nav-toggle__bars::after{
-    content:""; position:absolute; left:0; width:20px; height:2px; background:#c9f7ff; border-radius:2px;
-    transition: transform .2s ease, top .2s ease, opacity .2s ease;
-  }
-  .nav-toggle__bars::before{ top:-6px; }
-  .nav-toggle__bars::after { top: 6px; }
+.site-nav.open .nav-toggle__bars{
+  background: transparent;            /* прячем среднюю полоску */
+}
+.site-nav.open .nav-toggle__bars::before{
+  top: 0;                              /* сводим к центру */
+  transform: rotate(45deg);            /* диагональ ↘ */
+}
+.site-nav.open .nav-toggle__bars::after{
+  top: 0;
+  transform: rotate(-45deg);           /* диагональ ↗ */
+}
 
-  /* бренд в 2 строки, ничего не обрезаем */
-  .site-nav{ padding-block:12px 14px; align-items:center; inset:12px 16px auto 16px; transform:none; width:auto; }
-  .site-nav .brand{
-    display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto;
-    column-gap:10px; align-items:center;
-  }
+
+  .site-nav{ padding-block:12px 14px; inset:12px 16px auto 16px; transform:none; width:auto; }
+  .site-nav .brand{ display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto; column-gap:10px; align-items:center; }
   .site-nav .brand img{ grid-row:1 / span 2; }
-  .site-nav .brand span{
-    display:block; font-size:clamp(13px, 3.6vw, 16px); line-height:1.15;
-    white-space:normal; overflow:visible; text-overflow:clip; max-width:62vw;
-  }
-  .site-nav .brand small{
-    display:block; margin-top:2px; font-size:clamp(10px, 3vw, 12px); opacity:.75;
-  }
+  .site-nav .brand span{ display:block; font-size:clamp(13px, 3.6vw, 16px); line-height:1.15; max-width:62vw; }
+  .site-nav .brand small{ display:block; margin-top:2px; font-size:clamp(10px, 3vw, 12px); opacity:.75; }
 
-  /* инлайновое меню убираем, используем оверлей */
   .site-nav nav{ display:none; }
 
-  /* контейнер с ссылками — оверлей-меню */
   .site-nav .nav-menu{
     position:fixed; top:0; left:0; right:0;
     padding: calc(var(--nav-h) + 12px) 20px max(20px, env(safe-area-inset-bottom));
     display:grid; gap:14px;
     background:rgba(10,10,14,.78); backdrop-filter:blur(10px);
-    border-bottom:1px solid rgba(28, 241, 9, 0.06);
+    border-bottom:1px solid rgba(28,241,9,.06);
     transform:translateY(-100%); opacity:0; visibility:hidden;
     transition:transform .22s ease, opacity .22s ease, visibility .22s;
-    z-index:25; max-height:100dvh; overflow-y:auto; overscroll-behavior:contain;
+    z-index:25; max-height:100dvh; overflow-y:auto;
   }
   .site-nav .nav-menu a{
     display:block; text-align:center; padding:10px 12px; font-size:16px; color:#06f32e; text-decoration:none;
-    border:1px solid rgb(7, 240, 221); border-radius:12px; background:rgba(15,17,22,.55);
+    border:1px solid rgb(7,240,221); border-radius:12px; background:rgba(15,17,22,.55);
   }
   .site-nav .nav-menu a:focus-visible{ outline:2px solid #c9ffbf; outline-offset:3px; border-radius:12px; }
 
-  /* затемнение фона при открытом меню */
   .nav-scrim{
     position:fixed; inset:0; background:rgba(0,0,0,.45);
-    opacity:0; visibility:hidden; transition:opacity .2s ease, visibility .2s ease;
+    opacity:0; visibility:hidden; transition:opacity .2s, visibility .2s;
     z-index:24; pointer-events:none;
   }
-
-  /* когда меню открыто */
   .site-nav.open .nav-menu{ transform:translateY(0); opacity:1; visibility:visible; }
   .site-nav.open .nav-scrim{ opacity:1; visibility:visible; pointer-events:auto; }
-  .site-nav.open .nav-toggle__bars{ background:transparent; }
-  .site-nav.open .nav-toggle__bars::before{ top:0; transform:rotate(45deg); }
-  .site-nav.open .nav-toggle__bars::after { top:0; transform:rotate(-45deg); }
 
-  /* контент под более высокой мобильной шапкой */
-  .item .info-box{ top: calc(var(--nav-h) + 12px); }
+  .item .info-box{ top: calc(var(--nav-h) + 12px); transform:none; }
 }
 
-/* очень узкие — мягко обрежем название бренда после 2 строк */
 @media (max-width: 380px){
-  .site-nav .brand span{
-    display:-webkit-box; -webkit-line-clamp:2; line-clamp:2; -webkit-box-orient:vertical;
-    overflow:hidden; max-height:calc(1.2em * 2);
-  }
+  .site-nav .brand span{ display:-webkit-box; -webkit-line-clamp:2; line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   :root{ --nav-h: 104px; }
 }
 
-/* запрет прокрутки боди, когда меню/модалка открыты */
+/* запрет прокрутки при открытом меню/модалке */
 body.no-scroll{ height:100vh; overflow:hidden; touch-action:none; }
 
-/* === Mobile contact icons (компактнее) ================================ */
+/* Mobile contact icons (компактнее) */
 @media (max-width: 640px){
   .socials{ gap: clamp(8px, 3.6vw, 12px); }
-  .socials .social{ width: clamp(36px, 8.5vw, 44px); height: clamp(36px, 8.5vw, 44px); }
+  .socials .social{
+    width: clamp(36px, 8.5vw, 44px);
+    height: clamp(36px, 8.5vw, 44px);
+  }
 }
-
 /* Совсем узкие (≈320–360px) */
 @media (max-width: 360px){
   .socials{ gap:10px; }
