@@ -104,6 +104,21 @@ const DETAILS = [
         <li>Class: Apollo NEO</li>
       </ul>`,
     link: "https://en.wikipedia.org/wiki/2023_DZ2"
+  },
+  {
+    title: "QD8/2025",
+    html: `
+      <p>Near-Earth asteroid of the Apollo group, first detected on 18 Aug 2025.
+      On 3 Sep 2025 it passed ~0.6 LD (~200,000 km) from Earth — a completely
+      safe close approach. The estimated diameter is ~17–38 m (many reports cite
+      ~22 m, comparable to the Chelyabinsk bolide).</p>
+      <ul>
+        <li>Type: Apollo NEO</li>
+        <li>Close approach date: 2025-09-03</li>
+        <li>Minimum distance: ≈0.6 LD (~200,000 km)</li>
+        <li>Size: ~17–38 m (H-based estimate)</li>
+      </ul>`,
+    link: "https://en.wikipedia.org/wiki/2025_QD8"
   }
 ];
 
