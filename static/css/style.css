@@ -131,6 +131,12 @@ html,body{
 }
 .modal.open{ opacity:1; visibility:visible; }
 .modal__backdrop{ position:absolute; inset:0; }
+.modal__dialog .credit.small{
+  margin-top:10px;
+  font-size:12px;
+  opacity:.85;
+}
+
 .modal__dialog{
   position:relative; width:min(720px,92vw); max-height:80vh; overflow:auto;
   background:rgba(15,17,22,.95); border:1px solid rgba(255,255,255,.06);
@@ -144,12 +150,35 @@ html,body{
 .modal__dialog h3{ font-size:clamp(22px,2.2vw,28px); margin:0 0 10px; }
 .modal__dialog p, .modal__dialog li{ font-size:15px; line-height:1.6; color:#e2f105; }
 .modal__dialog ul{ margin:10px 0 0 18px; }
+/* Ссылки внутри модалки (кроме кнопки .modal__link) */
+.modal__dialog a:not(.modal__link){
+  color:#07d6f1;                   /* яркий бирюзовый */
+  text-decoration:underline;
+  text-underline-offset:2px;
+  text-decoration-thickness:1px;
+}
+.modal__dialog a:not(.modal__link):visited{
+  color:#07d6f1;                   /* убираем фиолетовый visited */
+}
+.modal__dialog a:not(.modal__link):hover{
+  color:#8ff7ff;                   /* подсветка при ховере */
+  text-decoration-color:#8ff7ff;
+}
+.modal__dialog a:not(.modal__link):focus-visible{
+  outline:2px solid #07d6f1;       /* видимый фокус */
+  outline-offset:2px;
+  border-radius:4px;
+}
+
+/* мелкая приписка-атрибуция, чтобы ссылки не бледнели */
+.modal__dialog .credit.small a{ opacity:1; }
+
 .modal__link{
   display:inline-flex; align-items:center; gap:8px; margin-top:14px; padding:10px 14px;
   border-radius:999px; border:1px solid #07d6f1; text-decoration:none; color:#17f703;
 }
 
-/* === Top Nav / Sections / Socials (без изменений по сути) ============ */
+/* === Top Nav / Sections / Socials  ============ */
 .site-nav{
   position:fixed; left:50%; top:16px; transform:translateX(-50%);
   width:min(1100px, calc(100vw - 32px));
@@ -316,4 +345,68 @@ body.no-scroll{ height:100vh; overflow:hidden; touch-action:none; }
 @media (max-width: 360px){
   .socials{ gap:10px; }
   .socials .social{ width:34px; height:34px; }
+}
+
+/* === Solar slide (3D) — final ========================================= */
+.item.has-3d .img-box{
+  /* перекрываем базовую .item .img-box */
+  left:20%;
+  top:var(--img-top, 54%);
+  transform:translateY(-50%);
+  width:clamp(720px, 62vw, 1200px);
+  height:clamp(420px, 64vh, 760px);
+  z-index:2;
+  pointer-events:auto; /* можно крутить/зумить модель */
+}
+
+/* сам viewer */
+.item.has-3d model-viewer.img-3d{
+  display:block;
+  width:100%; height:100%;
+  background:transparent !important;
+  --poster-color: transparent;         /* без вспышки постера */
+  outline:none;                        /* скрываем дефолтную рамку */
+  -webkit-tap-highlight-color:transparent;
+
+  /* появление и лёгкая «сочность» цвета */
+  opacity:0;
+  transform:scale(.985);
+  filter:saturate(1.22) contrast(1.06) brightness(1.04);
+  transition:opacity .45s ease, transform .45s ease, filter .2s ease;
+}
+.item.has-3d.active model-viewer.img-3d{
+  opacity:1;
+  transform:scale(1);
+}
+
+/* фокус только для клавиатуры */
+.item.has-3d model-viewer.img-3d:focus{ outline:none; }
+.item.has-3d model-viewer.img-3d:focus-visible{
+  outline:2px solid rgba(12,251,235,.6);
+  outline-offset:6px;
+  border-radius:12px;
+}
+
+/* планшеты/узкие ноунты — центрируем сильнее */
+@media (max-width:1200px){
+  .item.has-3d .img-box{
+    left:50%;
+    transform:translate(-50%, -50%);
+  }
+}
+
+/* телефоны — крупно, но без выхода за экран */
+@media (max-width:768px){
+  .item.has-3d .img-box{
+    width:min(96vw, 680px);
+    height:min(68vh, 560px);
+  }
+  .item.has-3d model-viewer.img-3d{
+    filter:saturate(1.15) contrast(1.04) brightness(1.03);
+  }
+}
+
+/* если user просит меньше анимации — убираем плавности */
+@media (prefers-reduced-motion:reduce){
+  .item.has-3d model-viewer.img-3d{ transition:none; }
 }

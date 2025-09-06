@@ -119,7 +119,35 @@ const DETAILS = [
         <li>Size: ~17–38 m (H-based estimate)</li>
       </ul>`,
     link: "https://en.wikipedia.org/wiki/2025_QD8"
-  }
+  },
+  {
+  title: "Solar System (animated)",
+  html: `
+    <p>A stylized, animated model of the Solar System embedded locally as a GLB.
+    You can rotate, pan, and zoom the scene. The visualization is meant for readability,
+    so planet sizes, distances, and orbital speeds are artistically compressed (not to scale).</p>
+    <ul>
+      <li><strong>Type:</strong> Interactive 3D GLB with baked loop <em>“Take&nbsp;001”</em>.</li>
+      <li><strong>Contents:</strong> Sun and the eight planets (Mercury → Neptune), rings &amp; orbit guides.</li>
+      <li><strong>Scale:</strong> Non-linear; sizes and distances are simplified for screen viewing.</li>
+      <li><strong>Animation:</strong> Simplified orbital motion; continuous loop.</li>
+      <li><strong>Controls:</strong> Drag to rotate, wheel/pinch to zoom, right-drag to pan.</li>
+      <li><strong>Formats:</strong> .glb (web); optional .usdz for iOS AR via <code>ios-src</code>.</li>
+      <li><strong>Source:</strong> Sketchfab model “Solar System animation”.</li>
+      <li><strong>Author:</strong> Samer_Arab_S5</li>
+      <li><strong>License:</strong> Creative Commons Attribution 4.0 (CC&nbsp;BY&nbsp;4.0)</li>
+      <li><strong>Notes:</strong> Educational/stylized; not a physically accurate ephemeris.</li>
+    </ul>
+    <p class="credit small">
+      “Solar System animation” (<a href="https://skfb.ly/oKOqS" target="_blank" rel="noopener">model</a>)
+      by Samer_Arab_S5 is licensed under
+      <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>.
+      Attribution is required if you reuse or modify the asset.
+    </p>
+  `,
+  link: "https://en.wikipedia.org/wiki/Solar_System"
+}
+
 ];
 
 const modal       = document.getElementById("infoModal");
@@ -349,4 +377,61 @@ modal.addEventListener("click", (e) => {
   addEventListener('resize', resize);
   scheduleComets();
   raf = requestAnimationFrame(tick);
+})();
+
+(() => {
+  const mv = document.getElementById('solarMV');
+  if (!mv) return;
+
+  // 0. Когда модель загрузилась — можем трогать материалы и анимацию
+  mv.addEventListener('load', () => {
+
+    // 1) Перекраска орбит (подбери оттенок, сейчас — бирюза)
+    const ORBIT_BASE = [0.62, 0.98, 0.95, 1.0]; // rgba 0..1  (≈ #9EFFF3)
+    const ORBIT_EMISS = [0.15, 0.75, 0.7];     // лёгкое «свечение»
+
+    mv.model?.materials?.forEach(mat => {
+      const n = (mat.name || '').toLowerCase();
+      // Подхватим названия вида "orbit", "orbits", "path", "trail", "line"
+      if (n.includes('orbit') || n.includes('path') || n.includes('trail') || n.includes('line')) {
+        try { mat.pbrMetallicRoughness.setBaseColorFactor(ORBIT_BASE); } catch {}
+        try { mat.emissiveFactor = ORBIT_EMISS; } catch {}
+        try { mat.pbrMetallicRoughness.setMetallicFactor(0.0); } catch {}
+        try { mat.pbrMetallicRoughness.setRoughnessFactor(1.0); } catch {}
+      }
+    });
+
+    // 2) Замедлить анимацию (было «слишком быстро»)
+    setSolarAnimSpeed(0.1); // 0.1x от исходной скорости
+  });
+
+  // Меняем скорость анимации. Предпочтительно через публичное свойство, иначе — фолбэк.
+  function setSolarAnimSpeed(mult = 0.1) {
+    // Если модель имеет анимации — убедимся, что что-то включено
+    if (mv.availableAnimations?.length && !mv.animationName) {
+      mv.animationName = mv.availableAnimations[0];
+    }
+
+    // Новые версии (<model-viewer> 3.x) — поддерживают animationTimeScale
+    if ('animationTimeScale' in mv) {
+      mv.animationTimeScale = mult;
+      return;
+    }
+
+    // Фолбэк: вручную двигаем currentTime медленнее
+    let raf = 0, last = performance.now();
+    mv.pause(); // останавливаем «внутренний» плеер
+    const tick = (t) => {
+      const dt = (t - last) / 1000; last = t;
+      const dur = mv.duration || 1;
+      mv.currentTime = (mv.currentTime + dt * mult) % dur;
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    // На всякий пожарный — останавливаем фолбэк, если слайд скрыли
+    mv.addEventListener('model-visibility', (e) => {
+      if (e.detail.visible === false) cancelAnimationFrame(raf);
+    });
+  }
 })();
