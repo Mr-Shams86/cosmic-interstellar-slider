@@ -11,8 +11,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -21,20 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build site folder
-        run: |
-          set -e
-          mkdir -p site
-          cp -R static site/static
-          cp templates/index.html site/index.html
-          # Меняем только локальные ассеты; OG/Twitter абсолютные URL не трогаем
-          sed -i -E 's|href="/static/|href="./static/|g' site/index.html
-          sed -i -E 's|src="/static/|src="./static/|g'   site/index.html
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: .   # публикуем весь корень (index.html + static/**)
 
   deploy:
     needs: build
