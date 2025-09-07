@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <base href="/" />
-  <script>
-    (function () {
-      if (location.hostname.endsWith('github.io')) {
-        const repo = location.pathname.split('/').filter(Boolean)[0] || '';
-        document.querySelector('base')?.setAttribute('href', repo ? `/${repo}/` : '/');
-      }
-    })();
-  </script>
+    <!-- ранее всех скриптов/стилей -->
+  <link rel="preload"
+        href="./static/models/solar_system_animation.glb"
+        as="fetch" type="model/gltf-binary" crossorigin>
+
+  <link rel="preload"
+        href="./static/env/royal_esplanade_1k.hdr"
+        as="fetch" crossorigin>
+
 
   <!-- model-viewer -->
   <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.1.0/dist/model-viewer.min.js"></script>
@@ -46,10 +46,10 @@
   <meta name="description" content="Interactive slider of recent interstellar visitors: ʻOumuamua, Borisov, 3I/ATLAS, 2019 OK, 2023 DZ2. Built with HTML/CSS/JS." />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="static/images/avatar/avatar_oumuamua.png" />
+  <link rel="icon" type="image/png" href="./static/images/avatar/avatar_oumuamua.png" />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="static/css/style.css" />
+  <link rel="stylesheet" href="./static/css/style.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" />
 </head>
 
@@ -57,7 +57,7 @@
   <!-- фикс-шапка -->
   <header class="site-nav">
     <a class="brand" href="#home">
-      <img src="static/images/preview_small.jpg" alt="Solar System preview" />
+      <img src="./static/images/preview_small.jpg" alt="Solar System preview" />
       <span>Cosmic Interstellar Slider</span>
       <small>by ๛Samer Shams๖</small>
     </a>
@@ -98,7 +98,7 @@
       <div class="img-box">
         <div class="img-slider">
           <div class="img-item" style="--i:0;">
-            <img src="static/images/oumuamua.png" fetchpriority="high" decoding="async" alt="ʻOumuamua" />
+            <img src="./static/images/oumuamua.png" fetchpriority="high" decoding="async" alt="ʻOumuamua" />
           </div>
         </div>
       </div>
@@ -120,7 +120,7 @@
       <div class="img-box">
         <div class="img-slider">
           <div class="img-item" style="--i:1;">
-            <img src="static/images/borisov.png" loading="lazy" decoding="async" alt="2I/Borisov" />
+            <img src="./static/images/borisov.png" loading="lazy" decoding="async" alt="2I/Borisov" />
           </div>
         </div>
       </div>
@@ -142,7 +142,7 @@
       <div class="img-box">
         <div class="img-slider">
           <div class="img-item" style="--i:2;">
-            <img src="static/images/atlas.png" loading="lazy" decoding="async" alt="3I/Atlas" />
+            <img src="./static/images/atlas.png" loading="lazy" decoding="async" alt="3I/Atlas" />
           </div>
         </div>
       </div>
@@ -164,7 +164,7 @@
       <div class="img-box">
         <div class="img-slider">
           <div class="img-item" style="--i:3;">
-            <img src="static/images/OK.png" loading="lazy" decoding="async" alt="2019/OK" />
+            <img src="./static/images/OK.png" loading="lazy" decoding="async" alt="2019/OK" />
           </div>
         </div>
       </div>
@@ -186,7 +186,7 @@
       <div class="img-box">
         <div class="img-slider">
           <div class="img-item" style="--i:4;">
-            <img src="static/images/DZ2.png" loading="lazy" decoding="async" alt="DZ2/2023" />
+            <img src="./static/images/DZ2.png" loading="lazy" decoding="async" alt="DZ2/2023" />
           </div>
         </div>
       </div>
@@ -208,7 +208,7 @@
       <div class="img-box">
         <div class="img-slider">
           <div class="img-item" style="--i:5;">
-            <img src="static/images/QD8.png" loading="lazy" decoding="async" alt="QD8/2025" />
+            <img src="./static/images/QD8.png" loading="lazy" decoding="async" alt="QD8/2025" />
           </div>
         </div>
       </div>
@@ -234,9 +234,9 @@
             <model-viewer
               id="solarMV"
               class="img-3d"
-              src="static/models/solar_system_animation.glb"
+              src="./static/models/solar_system_animation.glb"
               alt="Animated Solar System 3D model"
-              aria-label="3D scene. Drag to rotate, scroll/pinch to zoom."
+              aria-label="3D scene. Drag to rotate, scroll/pinch to zoom."  
               camera-controls
 
               autoplay
@@ -254,7 +254,7 @@
               min-field-of-view="10deg"
               max-field-of-view="80deg"
 
-              environment-image="static/env/royal_esplanade_2k.hdr"
+              environment-image="./static/env/royal_esplanade_1k.hdr"
               exposure="1.45"
               shadow-softness="0.9"
               tone-mapping="aces"
@@ -275,13 +275,13 @@
 
 
     <ul class="avatar" aria-label="Choose object">
-      <li class="selected"><img loading="lazy" src="static/images/avatar/avatar_oumuamua.png" alt="ʻOumuamua" /></li>
-      <li><img loading="lazy" src="static/images/avatar/avatar_borisov.png" alt="2I/Borisov" /></li>
-      <li><img loading="lazy" src="static/images/avatar/avatar_atlas.png" alt="3I/Atlas" /></li>
-      <li><img loading="lazy" src="static/images/avatar/avatar_ok.png" alt="2019/OK" /></li>
-      <li><img loading="lazy" src="static/images/avatar/avatar_dz2.png" alt="2023/DZ2" /></li>
-      <li><img loading="lazy" src="static/images/avatar/avatar_qd8.png" alt="2025/QD8" /></li>
-      <li><img loading="lazy" src="static/images/preview_small.jpg" alt="Animated Solar System 3D model" /></li>
+      <li class="selected"><img loading="lazy" src="./static/images/avatar/avatar_oumuamua.png" alt="ʻOumuamua" /></li>
+      <li><img loading="lazy" src="./static/images/avatar/avatar_borisov.png" alt="2I/Borisov" /></li>
+      <li><img loading="lazy" src="./static/images/avatar/avatar_atlas.png" alt="3I/Atlas" /></li>
+      <li><img loading="lazy" src="./static/images/avatar/avatar_ok.png" alt="2019/OK" /></li>
+      <li><img loading="lazy" src="./static/images/avatar/avatar_dz2.png" alt="2023/DZ2" /></li>
+      <li><img loading="lazy" src="./static/images/avatar/avatar_qd8.png" alt="2025/QD8" /></li>
+      <li><img loading="lazy" src="./static/images/preview_small.jpg" alt="Animated Solar System 3D model" /></li>
     </ul>
     <canvas id="fxStars" aria-hidden="true"></canvas>
   </div>
@@ -358,6 +358,6 @@
   </div>
 
   <!-- Scripts -->
-  <script src="static/js/script.js" defer></script>
+  <script src="./static/js/script.js" defer></script>
 </body>
 </html>
