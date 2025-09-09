@@ -211,7 +211,7 @@
 
 ## 🔗 Ссылки
 
-- [Сайт проекта](Live demo):https://mr-shams86.github.io/cosmic-interstellar-slider/?utm_source=chatgpt.com
+- [Сайт проекта](Live demo):https://mr-shams86.github.io/cosmic-interstellar-slider/#home
 
 - [GitHub репозиторий](https://github.com/Mr-Shams86/cosmic-interstellar-slider)
 
