@@ -211,7 +211,7 @@ modal.addEventListener("click", (e) => {
     toggle.setAttribute('aria-expanded', String(isOpen));
     toggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
     const lock = isOpen || modal.classList.contains('open');
-    document.body.classList.toggle('no-scroll', lock);
+    // document.body.classList.toggle('no-scroll', isOpen);
   }
 
   toggle.addEventListener('click', () => setOpen(!header.classList.contains('open')));
