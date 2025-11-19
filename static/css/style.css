@@ -60,7 +60,7 @@ html,body{
 
 /* Картинка */
 .item .img-box{
-  position:absolute; left:40%;
+  position:absolute; left:30%;
   top: var(--img-top, 54%);
   transform:translateY(-50%);
   width:clamp(560px, 50vw, 820px);
@@ -233,7 +233,7 @@ main ul{ padding-left:18px; line-height:1.7; }
 
 /* === Адаптив =========================================================== */
 @media (max-width:1200px){
-  .item .img-box{ left:45%; width:clamp(480px,56vw,720px); height:clamp(360px,60vh,640px); }
+  .item .img-box{ left:38%; width:clamp(480px,56vw,720px); height:clamp(360px,60vh,640px); }
   .item .info-box{ width:min(36vw,420px); }
   .avatar{ right:max(6px, env(safe-area-inset-right)); }
   .avatar li{ width:72px; height:72px; margin:14px 0; }
