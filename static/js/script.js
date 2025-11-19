@@ -369,8 +369,14 @@ modal.addEventListener("click", (e) => {
   
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) cancelAnimationFrame(raf);
-    else { lastT = performance.now(); raf = requestAnimationFrame(tick); }
+    if (document.hidden) { 
+      cancelAnimationFrame(raf);
+      clearTimeout(cometTimer);
+      comets = [];
+    } else { lastT = performance.now();
+      scheduleComets(); 
+      raf = requestAnimationFrame(tick); 
+    }
   });
 
   resize();
