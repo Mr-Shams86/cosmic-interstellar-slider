@@ -1,225 +1,228 @@
 
 # Cosmic Interstellar Slider Website
 
-## 🌟 **Описание проекта**
+## 🌟 **Project Description**
 
-**Интерактивный одностраничный сайт-слайдер про межзвёздные объекты, посетившие (или близко пролетевшие мимо) Солнечную систему.**
+**An interactive single-page slider website about interstellar objects that visited (or passed close to) our Solar System.**
 
-**Каждый слайд — это крупный PNG без фона + краткое описание и ссылка на первоисточник. Переключение — через круговые аватары справа.**
+**Each slide is a large transparent PNG + a short description and a source link. Navigation is done via circular avatars on the right side.**
 
-**На фоне — живой space-background на <canvas>: мерцающие звёзды с лёгким дрейфом, редкие «кометы» с хвостом и едва заметные «пылевые» облачка у краёв. Фон не перехватывает клики, работает адаптивно и уважает prefers-reduced-motion (упрощённая анимация или отключение комет).**
-**Дополнительно: отдельный слайд со стилизованной анимированной Солнечной системой (<model-viewer> + локальный GLB, HDR-окружение).**
+**In the background — a live space animation on <canvas>: twinkling stars with slight drifting, rare “comets” with tails, and subtle “dust” clouds near the edges. The background does not capture clicks, is fully responsive, and respects prefers-reduced-motion (simplified animation or disabled comets).**
+
+**Additionally: a separate slide with a stylized animated Solar System (<model-viewer> + local GLB + HDR environment).**
 
 ---
 
-* Что уже включено:
+## Included objects::
 
 * 1I/ʻOumuamua (2017)
 
 * 2I/Borisov (2019)
 
-* 3I/ATLAS (2025, предварительные данные)
+* 3I/ATLAS (2025, preliminary data)
 
-* 2019/OK (около 100 м, близкий пролёт 25 Jul 2019)
+* 2019/OK (≈100 m, close flyby – July 25, 2019)
 
-* 2023/DZ2 (40–90 м, близкий пролёт 25 Mar 2023)
+* 2023/DZ2 (40–90 m, close flyby – March 25, 2023)
 
-* QD8/2025 (22 м, близкий пролёт 3 сентября 2025 года)
+* QD8/2025 (22 m, close flyby – September 3, 2025)
 
-* Solar System (animated) — Sun + 8 планет с упрощёнными орбитами (GLB)
-
----
-
-## **Ключевые функции сайта:**
-
-* Гладкий carousel/slider с переключением по аватарам
-
-* Модальное окно “Learn more”: заголовок, описание, ссылка на источник
-
-* Адаптивный интерфейс: mobile-first брейкпоинты (1200 / 768 / 640 / 420 / 380), бургер-меню с затемнением фона, учёт safe-area, без горизонтального скролла
-
-* Контактные иконки в одну строку и на мобильных, и на десктопе
-
-* Доступность (a11y): ARIA-атрибуты, навигация с клавиатуры (←/→), ESC/клик по подложке закрывает модалку/меню, видимый фокус
-
-* Производительность: loading="lazy", decoding="async", fetchpriority для первого слайда, will-change, анимации на transform
-
-* Визуал: прозрачные PNG с мягкой тенью, единый тёмный фон со «световой лужей»
-
-* Анимированный космический фон на canvas (звёзды, редкие «кометы», мягкая виньетка/bloom).
-
-* Корректные слои: canvas под картинкой и текстом, кнопки всегда кликабельны.
-
-* Производительность: clamped DPR (до 2×), пауза анимации при скрытии вкладки, перерасчёт размеров при ресайзе.
-
-* Доступность: prefers-reduced-motion уменьшает интенсивность анимации и выключает «кометы».
-
-* SEO & Sharing: canonical, Open Graph/Twitter мета-теги, осмысленные alt
-
-* 3D-слайд Solar System: локальный GLB + HDR-окружение; вращение/зум, прозрачный фон, аккуратный фокус.
+* Solar System (animated) — Sun + 8 planets with simplified orbits (GLB)
 
 ---
 
-## 🔧 **Функциональные возможности**
+## **Key Website Features:**
 
-* Переключение объектов по клику на круглые аватары.
+* Smooth carousel/slider with avatar-based navigation
 
-* Плавное появление/исчезновение изображения на активном слайде.
+* “Learn more” modal: title, description, source link
 
-* Модалка с заголовком, описанием и кнопкой источника.
+* Responsive interface: mobile-first breakpoints (1200 / 768 / 640 / 420 / 380), burger menu with background dimming, safe-area support, no horizontal scrolling
 
-* Единый тёмный фон с «световой лужей», чтобы объекты читались объёмно.
+* Contact icons displayed in one row on both mobile and desktop
 
-* Живой фон: звёзды с мерцанием и вертикальным дрейфом, редкие «кометы» с хвостом, «пылевые» облачка у краёв.
+* Accessibility (a11y): ARIA attributes, keyboard navigation (←/→), ESC/backdrop close for modal/menu, visible focus
 
-* Мягкий цветной bloom по углам и лёгкая виньетка (CSS ::after) для глубины.
+* Performance: loading="lazy", decoding="async", fetchpriority for first slide, will-change, transform-based animations
 
-* Простая схема расширения: добавляешь новый <div class="item">…</div>, аватар и данные — и готов новый слайд.
+* Visual style: transparent PNGs with soft shadows, unified dark background with a subtle glow spot
 
----
+* Animated space background on canvas (stars, rare comets, soft vignette/bloom)
 
-## ✨ 3D-слайд: Solar System (animated)
+* Correct layering: canvas is under images/text, all buttons remain clickable
 
-* Рендер: <model-viewer> v4 (локально, без CDN).
-  Файлы:
+* Performance tweaks: clamped DPR (up to 2×), animation pauses on tab hide, recalculation on resize
 
-* Модель: static/models/solar_system_animation.glb
+* Accessibility: prefers-reduced-motion lowers animation intensity and disables comets
 
-* HDR-окружение: static/env/royal_esplanade_2k.hdr
+* SEO & Sharing: canonical, Open Graph/Twitter meta tags, meaningful alt
 
-* Скрипты компонента: static/vendor/model-viewer/lib/model-viewer.js и static/vendor/model-viewer/lib/features/scene-graph.js
-
-* Примечание: орбиты/анимация выпечены в GLB как клип “Take 001”; скорость вращения планет задаётся моделью. Параметры камеры/света можно менять атрибутами.
-
-## ✨ Космический фон (Canvas)
-
-* Фон отрисовывается в <canvas id="fxStars">, добавлен последним внутри .carousel.
-
-* Слой #fxStars расположен между фоном слайда и контентом (z-index=1), имеет pointer-events:none.
-
-
-# Что есть:
-
-* Звёзды: мягкое мерцание и медленный дрейф вниз.
-
-* «Кометы»: появляются редко, имеют светящийся хвост.
-
-* «Пыль»: размытые цветные облачка у краёв экрана, едва заметные.
-
-* Виньетка/блум: добавлен через ::after у .carousel.
-
-# A11y & perf:
-
-* prefers-reduced-motion: меньше частиц, кометы отключены.
-
-* DPR ограничен до 2×, анимация ставится на паузу при document.hidden.
-
-* Размеры и плотность частиц пересчитываются при ресайзе.
-
-## 🧪 Тест-чеклист
-
-* Кнопка Learn more кликабельна везде; канвас клики не перехватывает.
-
-* На мобильных бургер открывается/закрывается, бэкдроп активен; ESC закрывает.
-
-* При «Reduce motion» — кометы отключены, частиц меньше.
-
-* При ресайзе/повороте — фон подстраивается, без смазов и «рваных» переходов.
+* 3D Solar System slide: local GLB + HDR environment; rotation/zoom, transparent background, clean focus
 
 ---
 
-## 🛠️ **Используемые технологии**
+## 🔧 **Functional Features**
+
+* Object switching by clicking on round avatars
+
+* Smooth fade in/out for active slide images
+
+* Modal with title, description, and source button
+
+* Unified dark background with a light glow under objects
+
+* Live background: stars twinkle with vertical drifting, rare comets with tails, subtle “dust” clouds on the edges
+
+* Soft bloom in corners and light vignette (CSS ::after) for depth
+
+* Simple extension: add a new <div class="item">...</div>, avatar, and data — new slide ready
+
+---
+
+## ✨ 3D Slide: Solar System (Animated):
+
+* Rendering: <model-viewer> v4 (local, no CDN)
+
+# Files:
+
+* Model: static/models/solar_system_animation.glb
+
+* HDR environment: static/env/royal_esplanade_2k.hdr
+
+* Component scripts:
+* static/vendor/model-viewer/lib/model-viewer.js
+* static/vendor/model-viewer/lib/features/scene-graph.js
+
+* Note: Orbits/animation are baked into the GLB as clip “Take 001”. Planet rotation speed is set by the model. Camera/light parameters can be adjusted via attributes.
+
+## ✨ Space Background (Canvas)
+
+* Rendered in <canvas id="fxStars">, injected last inside .carousel
+
+* Layer #fxStars is placed between slide background and content (z-index = 1) with pointer-events: none
+
+
+# What’s included:
+
+* Stars: soft twinkling with slow downward drift
+
+* Comets: rare appearance with glowing tails
+
+* Dust: blurred colored clouds near screen edges
+
+* Vignette/Bloom: added via .carousel::after
+
+# A11y & Performance:
+
+* prefers-reduced-motion: fewer particles, comets disabled
+
+* DPR limited to 2×
+
+* Animation paused on document.hidden
+
+* Particle size/density recalculated on resize
+
+## 🧪 Test Checklist:
+
+* “Learn more” button is clickable everywhere; canvas never blocks it
+
+* On mobile, burger opens/closes correctly; backdrop works; ESC closes
+
+* With “Reduce motion”, comets are disabled; fewer particles
+
+* On resize/orientation change — smooth recalculation, no visual glitches
+
+---
+
+## 🛠️ **Technologies Used**
 
 **Frontend:**
 
-* HTML5 + CSS3: custom properties, clamp(), svh, safe-area insets, @supports, overflow: clip (+ фолбэк)
+* HTML5 + CSS3: custom properties, clamp(), svh, safe-area insets, @supports, overflow: clip (+ fallback)
 
-* Vanilla JavaScript: слайдер-движок, модалка, мобильное бургер-меню, управление фокусом, ARIA-состояния
+* Vanilla JavaScript: slider engine, modal, burger menu, focus management, ARIA states
 
-* Иконки/шрифты: Remix Icon, Google Fonts (Montserrat)
+* Icons / Fonts: Remix Icon, Google Fonts (Montserrat)
 
-* Canvas 2D (requestAnimationFrame, учёт devicePixelRatio, расчёт плотности частиц от площади).
+* Canvas 2D (requestAnimationFrame, devicePixelRatio support, density based on area)
 
-* prefers-reduced-motion — адаптация анимаций под системные настройки.
+* prefers-reduced-motion for system-level animation control
 
-* Хостинг/CI: GitHub Pages (опционально GitHub Actions deploy-pages)
+* Hosting / CI: GitHub Pages (optionally via GitHub Actions)
 
-* 3D: <model-viewer> v4 (локально), HDR-окружение, прозрачный фон viewer.
-
-* Иконки/шрифты: Remix Icon, Google Fonts (Montserrat).
+* 3D: <model-viewer> v4 (local), HDR environment, transparent viewer background
 
 **Backend:**
 
-* Не используется (статический сайт).
-
+* Not used (static website only).
 
 **DevOps:**
 
-* GitHub Pages — хостинг демо
+* GitHub Pages — live demo hosting
 
-* GitHub Actions — автосборка и публикация (.github/workflows/pages.yml):
+* GitHub Actions — auto build & deploy (.github/workflows/pages.yml)
 
-* собираем папку site/ из templates/index.html и static/**
+* builds site/ from templates/index.html and static/**
 
-* переписываем пути /static/ → ./static/ для корректной работы в подкаталоге Pages
+* rewrites /static/ → ./static/ for correct GitHub Pages paths
 
-* деплой артефакта на Pages
+* deploys artifact to Pages
 
 **Security:**
 
-* Сайт без бекэнда и без куков/аутентификации. Все ассеты локальные (нет сторонних трекеров).
-* Рекомендация на будущее: добавить CSP и rel="noopener"/noreferrer" для внешних ссылок.
+* No backend, no cookies, no authentication
+
+* All assets are local (no trackers)
+
+* Recommendation: add CSP and rel="noopener noreferrer" for external links
 
 ---
 
-## 🔐 **Использование API**
+## 🔐 **API Usage**
 
-* Сторонние API не используются. Сайт полностью статический.
+* No external APIs are used. The website is fully static.
 
-### Доступные эндпоинты:
+### Available endpoints:
 
-* нет (N/A)
-
+* N/A
 ---
 
-## 🏢 **Структура проекта**
+## 🏢 **Project Structure**
 
 ```
 .
-├── 🐳 docker-compose.yml         — оркестрация контейнеров (web, etc.)
-├── 🐋 Dockerfile                 — рецепт сборки образа приложения
-├── 📘 README.md                  — описание проекта, как запускать и настраивать
-├── 📦 requirements.txt           — зависимости Python (виртуальное окружение/образ)
-├── 📂 static                     — статические ресурсы сайта
+├── 🐳 docker-compose.yml         — container orchestration (web, etc.)
+├── 🐋 Dockerfile                  — image build recipe
+├── 📘 README.md                   — project description and setup
+├── 📦 requirements.txt            — Python dependencies (venv / image)
+├── 📂 static                      — static website assets
 │   ├── 🎨 css
-│   │   └── 🎨 style.css          — стили оформления (шрифты, сетка, темы)
+│   │   └── 🎨 style.css           — layout & visual styles
 │   ├── 🌅 env
-│   │   └── 🌄 royal_esplanade_2k.hdr — HDRI-окружение для реалистичного света/неба
+│   │   └── 🌄 royal_esplanade_2k.hdr — HDR environment for realistic lighting
 │   ├── 🖼️ images
-│   │   └── 👤 avatar             — аватары/изображения профиля (папка)
+│   │   └── 👤 avatar              — avatars / profile images
 │   ├── ⚙️ js
-│   │   └── ⚙️ script.js          — логика фронтенда (слайдер, 3D-интеракции)
+│   │   └── ⚙️ script.js           — frontend logic (slider, 3D, UI)
 │   └── 🪐 models
-│       └── 🪐 solar_system_animation.glb — 3D-модель/анимация Солнечной системы
-├── 📄 structure.txt              — текстовая схема структуры проекта (этот файл)
-└── 🧩 templates                  — HTML-шаблоны страниц
-    └── 🏠 index.html             — главная страница (подключает CSS/JS/3D-сцену)
+│       └── 🪐 solar_system_animation.glb — 3D Solar System model
+├── 📄 structure.txt               — saved project tree (this file)
+└── 🧩 templates
+    └── 🏠 index.html              — main page (connects CSS/JS/3D scene)
 
-8 directories, 10 files
 
 ```
 
 ---
 
-## 🔗 Ссылки
+## 🔗 Links
 
-* [Сайт проекта](Live demo):https://mr-shams86.github.io/cosmic-interstellar-slider/#home
-
-* [GitHub репозиторий](https://github.com/Mr-Shams86/cosmic-interstellar-slider)
+* Live demo:
+* https://mr-shams86.github.io/cosmic-interstellar-slider/#home
 
 ---
 
-## 📢 **Контакты**
+## 📢 **Contacts**
 
 * **Email**: sammertime763@gmail.com
 
@@ -227,11 +230,11 @@
 
 ---
 
-## 📚 **Лицензия**
+## 📚 **License**
 
 **MIT License**
 
-* 3D-модель Solar System — CC BY 4.0 (обязательна атрибуция):
+* Solar System 3D Model — CC BY 4.0 (Attribution required):
 
 * “Solar System animation” [(skfb.ly/oKOqS](https://skfb.ly/oKOqS?utm_source=chatgpt.com)
 * by Samer_Arab_S5 is licensed under (https://creativecommons.org/licenses/by/4.0/?utm_source=chatgpt.com)
